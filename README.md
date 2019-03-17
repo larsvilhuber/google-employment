@@ -63,34 +63,41 @@ kable(google_employment)
 ## Google takes over the world
 
 ```r
-model <- lm(google_employment$Employment ~ google_employment$Year)
+google_data <- rbind(google_employment,
+                  data.frame(Year=seq(max(google_employment$Year)+1,max(google_employment$Year)+20),
+                             Employment=NA)
+                  )
+model <- lm(google_data$Employment ~ google_data$Year)
 summary(model)
 ```
 
 ```
 ## 
 ## Call:
-## lm(formula = google_employment$Employment ~ google_employment$Year)
+## lm(formula = google_data$Employment ~ google_data$Year)
 ## 
 ## Residuals:
 ##    Min     1Q Median     3Q    Max 
 ## -12574  -5301  -2625   5961  20025 
 ## 
 ## Coefficients:
-##                          Estimate Std. Error t value Pr(>|t|)    
-## (Intercept)            -1.046e+07  7.730e+05  -13.53 1.57e-10 ***
-## google_employment$Year  5.222e+03  3.848e+02   13.57 1.50e-10 ***
+##                    Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      -1.046e+07  7.730e+05  -13.53 1.57e-10 ***
+## google_data$Year  5.222e+03  3.848e+02   13.57 1.50e-10 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## Residual standard error: 9187 on 17 degrees of freedom
+##   (20 observations deleted due to missingness)
 ## Multiple R-squared:  0.9155,	Adjusted R-squared:  0.9105 
 ## F-statistic: 184.1 on 1 and 17 DF,  p-value: 1.501e-10
 ```
 
 ```r
-plot(model,las=1)
+# get predicted values
+google_data$Predicted = predict(model,data.frame(google_data$Year))
+xyplot(Predicted ~ Year, data = google_data, type = c("p","r"), col.line = "red")
 ```
 
-![](README_files/figure-html/prediction-1.png)<!-- -->![](README_files/figure-html/prediction-2.png)<!-- -->![](README_files/figure-html/prediction-3.png)<!-- -->![](README_files/figure-html/prediction-4.png)<!-- -->
+![](README_files/figure-html/prediction-1.png)<!-- -->
 
