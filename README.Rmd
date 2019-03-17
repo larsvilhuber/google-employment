@@ -1,0 +1,46 @@
+---
+title: "Google Employment"
+author: "Lars Vilhuber"
+date: "3/17/2019"
+output: 
+  html_document: 
+    keep_md: yes
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(knitr)
+library(dplyr)
+library(lattice)
+```
+
+## Inspired by Twitter
+
+This was inspired by a Tweet from [@JonErlichman](https://twitter.com/JonErlichman/status/1107034647119257601):
+
+![Tweet by @JonErlichman](tweet-erlichman-20190317.png) 
+
+## Data
+I "scraped" the data from the Tweet (this involves me copy-and-pasting into Excel...), here it is again:
+```{r read_print_data}
+google_employment <- read_csv("google-employment.csv")
+kable(google_employment)
+```
+
+## Google takes over the world
+```{r prediction}
+google_data <- rbind(google_employment,
+                  data.frame(Year=seq(max(google_employment$Year)+1,max(google_employment$Year)+20),
+                             Employment=NA)
+                  )
+model <- lm(google_data$Employment ~ google_data$Year)
+summary(model)
+# get predicted values
+google_data$Predicted = predict(model,data.frame(google_data$Year))
+xyplot(Predicted ~ Year, data = google_data, type = c("p","r"), col.line = "red")
+
+```
+
